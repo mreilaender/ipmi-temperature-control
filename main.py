@@ -56,4 +56,6 @@ for device in config.devices:
         logger.warning("Got non 0 exit status (%d) for device (%s)" % (exit_status, device.path))
         logger.debug("Exit status in binary: %s" % exit_status_binary)
 
-    print(smartctl.temperature.current)
+    temperature = smartctl_result.temperature.current
+
+    print("Current drive (%s) temperature is %d C" % (device.path, temperature))

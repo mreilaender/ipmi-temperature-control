@@ -10,14 +10,14 @@ class Messages(BaseModel):
 
 class Temperature(BaseModel):
     current: int
-    drive_trip: int
+    drive_trip: Optional[int] = None
 
 
 class SmartCtlInner(BaseModel):
     exit_status: int
     messages: Optional[List[Messages]] = None
-    temperature: Optional[Temperature] = None
 
 
 class SmartCtlJsonOutput(BaseModel):
     smartctl: SmartCtlInner
+    temperature: Optional[Temperature] = None
