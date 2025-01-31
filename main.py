@@ -7,9 +7,7 @@ import yaml
 import logging
 
 from config import Main
-from smartctl_result_model import SmartCtlJsonOutput
-
-logger = logging.getLogger(__name__)
+from smartctl import SmartCtlJsonOutput
 
 parser = argparse.ArgumentParser(
                     prog='IPMI temperature control using smartctl to read temperatures',
@@ -17,8 +15,15 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-c', '--config-file', required=True, help="Path to the yaml config file",
                     dest="config_file")
+parser.add_argument('-d', '--debug', required=False, default=False, help="Turn on debug logging",
+                    action=argparse.BooleanOptionalAction)
 
 args = parser.parse_args()
+
+if args.debug:
+    logging.basicConfig(level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
 
 
 def read_yaml(file_path: str):
@@ -40,22 +45,23 @@ for device in config.devices:
     smartctl_result = SmartCtlJsonOutput(**result_json)
     smartctl = smartctl_result.smartctl
 
-    exit_status = smartctl_result.smartctl.exit_status
-    print("Result in binary: %s" % format(exit_status, "b"))
+    exit_status = smartctl_result.get_exit_status()
 
-    if(smartctl_result.smartctl.exit_status > 0):
-        exit_status_binary = format(exit_status, "b")
-        if(exit_status_binary[1] == 1):
-            logger.error("Could not read device info for %s", device.path)
-            logger.error(smartctl.messages[0].string)
-            continue
+    if not exit_status.is_successful():
+        logger.debug("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)" % (exit_status.decimal_value,
+                                                                                          exit_status.binary_value,
+                                                                                          device.path))
 
-        if(exit_status_binary[7] == 1):
-            logger.debug("The device self-test log contains records of errors. [ATA only] Failed self-tests outdated by a newer successful extended self-test are ignored.")
+    if exit_status.has_test_errors():
+        logger.debug("The device self-test log contains records of errors. [ATA only] Failed self-tests outdated by a "
+                     "newer successful extended self-test are ignored.")
 
-        logger.warning("Got non 0 exit status (%d) for device (%s)" % (exit_status, device.path))
-        logger.debug("Exit status in binary: %s" % exit_status_binary)
+    if exit_status.is_read_error():
+        logger.error("Could not read device info for %s", device.path)
+        logger.error(smartctl.messages[0].string)
+        continue
+
 
     temperature = smartctl_result.temperature.current
 
-    print("Current drive (%s) temperature is %d C" % (device.path, temperature))
+    logger.info("Current temperature of %s is %s C", device.path, temperature)
