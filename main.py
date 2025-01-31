@@ -61,7 +61,6 @@ for device in config.devices:
         logger.error(smartctl.messages[0].string)
         continue
 
+    current_temperature = smartctl_result.temperature.current
 
-    temperature = smartctl_result.temperature.current
-
-    logger.info("Current temperature of %s is %s C", device.path, temperature)
+    logger.info("Current temperature of %s is %s C", device.path, current_temperature)
