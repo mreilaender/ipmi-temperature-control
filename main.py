@@ -1,10 +1,9 @@
 import argparse
-import pathlib
-import subprocess
 import json
-from typing import Tuple, Type
-import yaml
 import logging
+import subprocess
+
+import yaml
 
 from config import Main
 from smartctl import SmartCtlJsonOutput
@@ -36,6 +35,7 @@ def read_yaml(file_path: str):
 
 
 config = read_yaml(args.config_file)
+default_fan_percentage = 20
 
 for device in config.devices:
     result = subprocess.run(["smartctl", "-a", device.path, "-j"], capture_output=True)
@@ -66,3 +66,9 @@ for device in config.devices:
     current_temperature = smartctl_result.temperature.current
 
     logger.info("Current temperature of %s is %s C", device.path, current_temperature)
+
+    for temperature_limit, fan_percentage in config.fan_curve.items():
+        if current_temperature >= temperature_limit:
+            default_fan_percentage = fan_percentage
+
+logger.info("Fans should spin with %s %s" % (default_fan_percentage, '%'))
