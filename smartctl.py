@@ -39,7 +39,6 @@ class ExitStatus:
         return not self.is_successful() and self.binary_value[1] == 1
 
     def has_test_errors(self):
-        print("Binary: %s, Decimal: %s" % (self.binary_value, self.decimal_value))
         return not self.is_successful() and self.binary_value[7] == 1
 
     def is_successful(self):

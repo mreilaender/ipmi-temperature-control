@@ -1,5 +1,6 @@
 devices:
   - path: /dev/nvme1
+  - path: /dev/nvme0
 fan-curve:
   30: 50
   50: 100

@@ -22,15 +22,17 @@ args = parser.parse_args()
 
 if args.debug:
     logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
 
 def read_yaml(file_path: str):
     with open(file_path, 'r') as stream:
-        config = yaml.safe_load(stream)
+        yaml_file = yaml.safe_load(stream)
 
-    return Main(**config)
+    return Main(**yaml_file)
 
 
 config = read_yaml(args.config_file)
