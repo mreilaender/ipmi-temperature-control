@@ -35,7 +35,9 @@ def read_yaml(file_path: str):
 
 
 config = read_yaml(args.config_file)
-default_fan_percentage = 20
+default_fan_percentage = config.default_speed
+
+logger.debug("Default fan speed is %s %s", default_fan_percentage, '%')
 
 for device in config.devices:
     result = subprocess.run(["smartctl", "-a", device.path, "-j"], capture_output=True)
@@ -50,9 +52,8 @@ for device in config.devices:
     exit_status = smartctl_result.get_exit_status()
 
     if not exit_status.is_successful():
-        logger.debug("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)" % (exit_status.decimal_value,
-                                                                                          exit_status.binary_value,
-                                                                                          device.path))
+        logger.debug("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)",
+                     exit_status.decimal_value, exit_status.binary_value, device.path)
 
     if exit_status.has_test_errors():
         logger.debug("The device self-test log contains records of errors. [ATA only] Failed self-tests outdated by a "
@@ -71,4 +72,4 @@ for device in config.devices:
         if current_temperature >= temperature_limit:
             default_fan_percentage = fan_percentage
 
-logger.info("Fans should spin with %s %s" % (default_fan_percentage, '%'))
+logger.info("Fans should spin with %s %s", default_fan_percentage, '%')

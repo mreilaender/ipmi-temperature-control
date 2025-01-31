@@ -9,3 +9,4 @@ class Device(BaseModel):
 class Main(BaseModel):
     fan_curve: dict = Field(alias="fan-curve")
     devices: List[Device]
+    default_speed: int = Field(alias="default-speed")
