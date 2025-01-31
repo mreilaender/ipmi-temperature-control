@@ -6,6 +6,7 @@ import subprocess
 import yaml
 
 from config import Main
+from ipmi import IPMI
 from smartctl import SmartCtlJsonOutput
 
 parser = argparse.ArgumentParser(
@@ -16,6 +17,9 @@ parser.add_argument('-c', '--config-file', required=True, help="Path to the yaml
                     dest="config_file")
 parser.add_argument('-d', '--debug', required=False, default=False, help="Turn on debug logging",
                     action=argparse.BooleanOptionalAction)
+parser.add_argument('--ipmi-host', required=False, help="IPMI hostname", dest="host")
+parser.add_argument('--ipmi-username', required=False, help="IPMI username", dest="username")
+parser.add_argument('--ipmi-password', required=False, help="IPMI password", dest="password")
 
 args = parser.parse_args()
 
@@ -73,3 +77,10 @@ for device in config.devices:
             default_fan_percentage = fan_percentage
 
 logger.info("Fans should spin with %s %s", default_fan_percentage, '%')
+
+ipmi = IPMI(args.host, args.username, args.password)
+
+sensors = ipmi.get_sensors()
+logger.info("Sensors: [%s]", sensors)
+
+result = ipmi.get_fan_speeds()
