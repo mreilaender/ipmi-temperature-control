@@ -1,10 +1,48 @@
+import argparse
+import pathlib
 import subprocess
 import json
+from typing import Tuple, Type
+import yaml
+import logging
 
-devices = ["/dev/sdc", "/dev/sdd", "/dev/sdf", "/dev/sde"]
+from config import Main
+from smartctl_result_model import SmartCtlJsonOutput
 
-for device in devices:
-    result = subprocess.run(["smartctl", device, "-j"], capture_output=True)
+logger = logging.getLogger(__name__)
+
+parser = argparse.ArgumentParser(
+                    prog='IPMI temperature control using smartctl to read temperatures',
+                    description='Controls temperatures on an IPMI instance using temperatures read from smartctl')
+
+parser.add_argument('-c', '--config-file', required=True, help="Path to the yaml config file",
+                    dest="config_file")
+
+args = parser.parse_args()
+
+
+def read_yaml(file_path: str):
+    with open(file_path, 'r') as stream:
+        config = yaml.safe_load(stream)
+
+    return Main(**config)
+
+
+config = read_yaml(args.config_file)
+
+for device in config.devices:
+    result = subprocess.run(["smartctl", "-a", device.path, "-j"], capture_output=True)
     result_json = json.loads(result.stdout)
-    current_temp = result_json['temperature']['current']
-    print(current_temp)
+
+    logger.debug("Parsing output from smartctl:")
+    logger.debug(result_json)
+
+    smartctl_result = SmartCtlJsonOutput(**result_json)
+    smartctl = smartctl_result.smartctl
+    #
+    if(smartctl_result.smartctl.exit_status > 0):
+        logger.error("Could not read device info for %s", device.path)
+        logger.error(smartctl.messages[0].string)
+        continue
+
+    print("Continuing")
