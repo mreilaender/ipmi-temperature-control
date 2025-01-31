@@ -1,0 +1,7 @@
+test: "12343"
+
+devices:
+  - path: /dev/nvme1
+    fan-curve:
+      30: 50
+      50: 100
