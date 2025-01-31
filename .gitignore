@@ -3,4 +3,4 @@
 # smartctl example json output
 output.json
 
-.venv/
+venv/
