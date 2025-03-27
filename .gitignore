@@ -6,3 +6,7 @@ output.json
 venv/
 __pycache__/
 config_true-nas.yaml
+
+build/
+
+*.egg-info
