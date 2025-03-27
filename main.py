@@ -55,7 +55,7 @@ for device in config.devices:
 
     exit_status = smartctl_result.get_exit_status()
 
-    if exit_status.is_successful():
+    if not (exit_status.is_device_open_error() or exit_status.is_cli_parse_error() or exit_status.is_disk_failing()):
         current_temperature = smartctl_result.temperature.current
 
         logger.info("Current temperature of %s is %s C", device.path, current_temperature)
@@ -63,10 +63,10 @@ for device in config.devices:
         for temperature_limit, fan_percentage in config.fan_curve.items():
             if current_temperature >= temperature_limit:
                 default_fan_percentage = fan_percentage
-    else:
+
+    if not exit_status.is_successful():
         logger.warning("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)",
                      exit_status.decimal_value, exit_status.binary_value, device.path)
-
 
     if exit_status.has_test_errors():
         logger.debug("The device self-test log contains records of errors. [ATA only] Failed self-tests outdated by a "
