@@ -20,16 +20,16 @@ parser.add_argument('-d', '--debug', required=False, default=False, help="Turn o
 parser.add_argument('-H', '--ipmi-host', required=False, help="IPMI hostname", dest="host")
 parser.add_argument('-u', '--ipmi-username', required=False, help="IPMI username", dest="username")
 parser.add_argument('-p', '--ipmi-password', required=False, help="IPMI password", dest="password")
+parser.add_argument('-l', '--log-file', required=False, help="log file location", dest="log_file")
 
 args = parser.parse_args()
 
-if args.debug:
-    logging.basicConfig(level=logging.DEBUG)
-else:
-    logging.basicConfig(level=logging.INFO)
+log_level = logging.DEBUG if args.debug else logging.INFO
+
+if args.log_file:
+    logging.basicConfig(filename=args.log_file, filemode='a', level=log_level)
 
 logger = logging.getLogger(__name__)
-
 
 def read_yaml(file_path: str):
     with open(file_path, 'r') as stream:
