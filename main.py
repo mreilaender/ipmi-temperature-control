@@ -39,9 +39,9 @@ def read_yaml(file_path: str):
 
 
 config = read_yaml(args.config_file)
-default_fan_percentage = config.default_speed
+target_fan_speed = config.default_speed
 
-logger.debug("Default fan speed is %s %s", default_fan_percentage, '%')
+logger.debug("Default fan speed is %s %s", target_fan_speed, '%')
 
 for device in config.devices:
     result = subprocess.run(["smartctl", "-a", device.path, "-j"], capture_output=True)
@@ -60,11 +60,11 @@ for device in config.devices:
 
         logger.info("Current temperature of %s is %s C", device.path, current_temperature)
 
-        for temperature_limit, fan_percentage in config.fan_curve.items():
-            if current_temperature >= temperature_limit:
+        for temperature_limit, fan_speed in config.fan_curve.items():
+            if current_temperature >= temperature_limit and target_fan_speed < fan_speed:
                 logger.debug("Temperature of drive %d exceeded temperature limit of %d with fan speed of %d '%'",
-                             current_temperature, temperature_limit, fan_percentage)
-                default_fan_percentage = fan_percentage
+                             current_temperature, temperature_limit, fan_speed)
+                target_fan_speed = fan_speed
 
     if not exit_status.is_successful():
         logger.warning("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)",
@@ -79,7 +79,7 @@ for device in config.devices:
         logger.error(smartctl.messages[0].string)
         continue
 
-logger.info("Fans should spin with %s %s", default_fan_percentage, '%')
+logger.info("Fans should spin with %s %s", target_fan_speed, '%')
 
 ipmi = IPMI(args.host, args.username, args.password)
 
