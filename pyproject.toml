@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-ipmi-temperature-control = "ipmi_temperature_control.main:main"
+ipmi-temperature-control = "ipmi_temperature_control.entrypoint:main"
 
 [tool.setuptools.packages.find]
 where = ["src/python"]

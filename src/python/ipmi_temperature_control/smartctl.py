@@ -1,6 +1,10 @@
-from typing import List, Optional
+import subprocess
+import json
+from time import sleep
 
+from typing import List, Optional
 from pydantic import BaseModel
+from threading import Thread
 
 
 class Messages(BaseModel):
@@ -13,6 +17,10 @@ class Temperature(BaseModel):
     drive_trip: Optional[int] = None
 
 
+class Device(BaseModel):
+    name: str
+
+
 class SmartCtlInner(BaseModel):
     exit_status: int
     messages: Optional[List[Messages]] = None
@@ -21,6 +29,7 @@ class SmartCtlInner(BaseModel):
 class SmartCtlJsonOutput(BaseModel):
     smartctl: SmartCtlInner
     temperature: Optional[Temperature] = None
+    device: Optional[Device]
 
     def get_exit_status(self):
         return ExitStatus(self.smartctl.exit_status)
@@ -61,3 +70,22 @@ class ExitStatus:
 
     def is_successful(self):
         return self.decimal_value == 0
+
+class ThreadExecutor(Thread):
+    def __init__(self, logger, device_path: str):
+        super().__init__()
+        self.result: Optional[SmartCtlJsonOutput] = None
+        self.logger = logger
+        self.device_path = device_path
+
+    def run(self):
+        self.logger.info("Reading smartctl output from %s" % self.device_path)
+        result = subprocess.run(["smartctl", "-a", self.device_path, "-j"], capture_output=True)
+        result_json = json.loads(result.stdout)
+
+        self.logger.debug("Parsing output from smartctl:")
+        self.logger.debug(result_json)
+
+        self.result = SmartCtlJsonOutput(**result_json)
+
+        self.logger.info("Smartctl output parsed from %s" % self.device_path)

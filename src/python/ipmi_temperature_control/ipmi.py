@@ -2,8 +2,11 @@ import io
 import subprocess
 import csv
 
+from logging import Logger
+
 class IPMI:
-    def __init__(self, host="", username="", password=""):
+    def __init__(self, logger: Logger, host="", username="", password=""):
+        self.logger = logger
         self.host = host
         self.username = username
         self.password = password
@@ -49,17 +52,17 @@ class IPMI:
         csv_reader = csv.reader(io.StringIO(result.stdout), delimiter=',')
 
         for row in csv_reader:
-            print(' ,'.join(row))
+            self.logger.info(' ,'.join(row))
 
     def execute_set_fan_speed(self, args):
         full_command = self.create_command()
         full_command += args
 
-        print("Executing [%s]" % full_command)
+        print(execute_or_raise(self.logger, full_command))
 
-        print(execute_or_raise(full_command))
+def execute_or_raise(logger: Logger, cmd):
+    logger.info("Executing [%s]" % cmd)
 
-def execute_or_raise(cmd):
     result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.stderr:
