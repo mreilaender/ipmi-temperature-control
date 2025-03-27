@@ -58,6 +58,6 @@ def execute_or_raise(cmd):
     result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.stderr:
-        raise Exception(result.stderr.decode("utf-8"))
+        raise Exception(result.stderr)
 
     return result
