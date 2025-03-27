@@ -1,15 +1,18 @@
 import argparse
+import os
 import sys
-from threading import Thread
-
 import yaml
 import logging
 
+from daemonize import Daemonize
 from .config import Main
 from .smartctl import ThreadExecutor
 from .ipmi import IPMI
 
-def main():
+def _main():
+    while True:
+        print("test")
+
     args = parser_args(sys.argv[1:])
     config = read_yaml(args.config_file)
 
@@ -116,3 +119,8 @@ def read_yaml(file_path: str):
         yaml_file = yaml.safe_load(stream)
 
     return Main(**yaml_file)
+
+def main():
+    pid = "/tmp/ipmi-temperature-control.pid"
+    daemon = Daemonize(app="ipmi-temperature-control", pid=pid, action=_main())
+    daemon.start()

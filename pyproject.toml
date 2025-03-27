@@ -15,7 +15,8 @@ dependencies = [
     "PyYAML==6.0.2",
     "ruamel.yaml==0.18.10",
     "ruamel.yaml.clib==0.2.12",
-    "typing_extensions==4.12.2"
+    "typing_extensions==4.12.2",
+    "daemonize==2.5.0"
 ]
 
 [project.scripts]
