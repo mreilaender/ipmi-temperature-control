@@ -17,9 +17,9 @@ parser.add_argument('-c', '--config-file', required=True, help="Path to the yaml
                     dest="config_file")
 parser.add_argument('-d', '--debug', required=False, default=False, help="Turn on debug logging",
                     action=argparse.BooleanOptionalAction)
-parser.add_argument('--ipmi-host', required=False, help="IPMI hostname", dest="host")
-parser.add_argument('--ipmi-username', required=False, help="IPMI username", dest="username")
-parser.add_argument('--ipmi-password', required=False, help="IPMI password", dest="password")
+parser.add_argument('-H', '--ipmi-host', required=False, help="IPMI hostname", dest="host")
+parser.add_argument('-u', '--ipmi-username', required=False, help="IPMI username", dest="username")
+parser.add_argument('-p', '--ipmi-password', required=False, help="IPMI password", dest="password")
 
 args = parser.parse_args()
 
@@ -55,26 +55,27 @@ for device in config.devices:
 
     exit_status = smartctl_result.get_exit_status()
 
-    if not exit_status.is_successful():
-        logger.debug("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)",
+    if exit_status.is_successful():
+        current_temperature = smartctl_result.temperature.current
+
+        logger.info("Current temperature of %s is %s C", device.path, current_temperature)
+
+        for temperature_limit, fan_percentage in config.fan_curve.items():
+            if current_temperature >= temperature_limit:
+                default_fan_percentage = fan_percentage
+    else:
+        logger.warning("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)",
                      exit_status.decimal_value, exit_status.binary_value, device.path)
+
 
     if exit_status.has_test_errors():
         logger.debug("The device self-test log contains records of errors. [ATA only] Failed self-tests outdated by a "
                      "newer successful extended self-test are ignored.")
 
-    if exit_status.is_read_error():
+    if exit_status.is_device_open_error():
         logger.error("Could not read device info for %s", device.path)
         logger.error(smartctl.messages[0].string)
         continue
-
-    current_temperature = smartctl_result.temperature.current
-
-    logger.info("Current temperature of %s is %s C", device.path, current_temperature)
-
-    for temperature_limit, fan_percentage in config.fan_curve.items():
-        if current_temperature >= temperature_limit:
-            default_fan_percentage = fan_percentage
 
 logger.info("Fans should spin with %s %s", default_fan_percentage, '%')
 
