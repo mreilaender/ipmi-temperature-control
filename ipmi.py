@@ -53,6 +53,13 @@ class IPMI:
         for row in csv_reader:
             print(' ,'.join(row))
 
+    def execute_set_fan_speed(self, args):
+        full_command = self.create_command()
+        full_command += args
+
+        print("Executing [%s]" % full_command)
+
+        print(execute_or_raise(full_command))
 
 def execute_or_raise(cmd):
     result = subprocess.run(cmd, capture_output=True, text=True)

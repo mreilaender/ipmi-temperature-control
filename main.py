@@ -83,7 +83,27 @@ logger.info("Fans should spin with %s %s", target_fan_speed, '%')
 
 ipmi = IPMI(args.host, args.username, args.password)
 
-sensors = ipmi.get_sensors()
-logger.info("Sensors: [%s]", sensors)
+# sensors = ipmi.get_sensors()
+# logger.info("Sensors: [%s]", sensors)
+#
+# result = ipmi.get_fan_speeds()
 
-result = ipmi.get_fan_speeds()
+args = ["raw", "0x3a", "0x01"]
+# CPU_FAN1
+args.append("0x64")
+# ?
+args.append("0x64")
+# ?
+args.append("0x64")
+# REAR_FAN2
+args.append("0x32")
+# FRNT_FAN1
+args.append("0x64")
+# FRNT_FAN2
+args.append(str(hex(target_fan_speed)))
+# FRNT_FAN3
+args.append(str(hex(target_fan_speed)))
+# ?
+args.append("0x64")
+
+ipmi.execute_set_fan_speed(args)
