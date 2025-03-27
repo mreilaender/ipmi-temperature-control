@@ -5,9 +5,9 @@ import subprocess
 
 import yaml
 
-from config import Main
-from ipmi import IPMI
-from smartctl import SmartCtlJsonOutput
+from .config import Main
+from .ipmi import IPMI
+from .smartctl import SmartCtlJsonOutput
 
 parser = argparse.ArgumentParser(
     prog='IPMI temperature control using smartctl to read temperatures',
@@ -107,3 +107,6 @@ args.append(str(hex(target_fan_speed)))
 args.append("0x64")
 
 ipmi.execute_set_fan_speed(args)
+
+def main():
+    print("hello")

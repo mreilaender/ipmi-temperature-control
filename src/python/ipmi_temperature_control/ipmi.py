@@ -1,8 +1,6 @@
 import io
 import subprocess
 import csv
-from io import BytesIO
-
 
 class IPMI:
     def __init__(self, host="", username="", password=""):
