@@ -10,8 +10,8 @@ from ipmi import IPMI
 from smartctl import SmartCtlJsonOutput
 
 parser = argparse.ArgumentParser(
-                    prog='IPMI temperature control using smartctl to read temperatures',
-                    description='Controls temperatures on an IPMI instance using temperatures read from smartctl')
+    prog='IPMI temperature control using smartctl to read temperatures',
+    description='Controls temperatures on an IPMI instance using temperatures read from smartctl')
 
 parser.add_argument('-c', '--config-file', required=True, help="Path to the yaml config file",
                     dest="config_file")
@@ -62,11 +62,13 @@ for device in config.devices:
 
         for temperature_limit, fan_percentage in config.fan_curve.items():
             if current_temperature >= temperature_limit:
+                logger.debug("Temperature of drive %d exceeded temperature limit of %d with fan speed of %d '%'",
+                             current_temperature, temperature_limit, fan_percentage)
                 default_fan_percentage = fan_percentage
 
     if not exit_status.is_successful():
         logger.warning("Got non 0 exit status (decimal: %d, binary: %s) for device (%s)",
-                     exit_status.decimal_value, exit_status.binary_value, device.path)
+                       exit_status.decimal_value, exit_status.binary_value, device.path)
 
     if exit_status.has_test_errors():
         logger.debug("The device self-test log contains records of errors. [ATA only] Failed self-tests outdated by a "
