@@ -30,5 +30,5 @@ which returns 8 values (in this case all 64er meaning 100%). Each of those repre
 the following order:
 
 ```text
-CPU_FAN1 ? ? ? FRNT_FAN1 FRNT_FAN2 FRNT_FAN3 ?
+CPU_FAN1 ? ? REAR_FAN2 FRNT_FAN1 FRNT_FAN2 FRNT_FAN3 ?
 ```
