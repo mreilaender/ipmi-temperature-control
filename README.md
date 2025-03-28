@@ -65,7 +65,7 @@ Description=IPMI temperature control
 [Service]
 Type=simple
 WorkingDirectory=/root/ipmi-temperature-control
-ExecStart=/root/ipmi-temperature-control/.venv/bin/ipmi-temperature-control --config-file config_true-nas.yaml --ipmi-host <ipmi-host> --ipmi-username <ipmi-user> --ipmi-password "<ipmi-password>" --log-file /var/log/ipmi-temperature-control.log
+ExecStart=/root/ipmi-temperature-control/.venv/bin/ipmi-temperature-control --config-file <path-to-config-file> --ipmi-host <ipmi-host> --ipmi-username <ipmi-user> --ipmi-password "<ipmi-password>" --log-file /var/log/ipmi-temperature-control.log
 
 [Install]
 WantedBy=default.target
