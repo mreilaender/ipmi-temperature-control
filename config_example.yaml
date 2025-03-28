@@ -1,8 +1,8 @@
 default-speed: 20
 
 devices:
-  - path: /dev/nvme1
-  - path: /dev/nvme0
+  - path: /dev/sda
+  - path: /dev/sdb
 
 fan-curve:
   40: 50
