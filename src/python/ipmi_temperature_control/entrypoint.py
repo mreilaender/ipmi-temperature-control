@@ -9,6 +9,7 @@ from .ipmi import IPMI
 
 def main():
     args = parse_args(sys.argv[1:])
+    print(args)
     config = read_yaml(args.config_file)
 
     log_level = logging.DEBUG if args.debug else logging.INFO
