@@ -61,7 +61,6 @@ def main():
             if exit_status.is_device_open_error():
                 logger.error("Could not read device info for %s", device_name)
                 logger.error(smartctl.messages[0].string)
-                continue
 
         logger.info("Setting fan speed to %s %s", target_fan_speed, "%")
 
