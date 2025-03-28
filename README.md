@@ -1,4 +1,4 @@
-# IPMI temperature control
+# ASRockRack E3C246D4U2-2T IPMI temperature control
 
 Sets fan speeds via remote IPMI according to a fan curve configured via a yaml file based on disk temperatures. If any
 of the disks exceeds a temperature from the configuration file the fan speeds will be set accordingly for `FRNT_FAN2`
