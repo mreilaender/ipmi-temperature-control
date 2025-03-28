@@ -4,6 +4,7 @@ devices:
   - path: /dev/sda
   - path: /dev/sdb
 
+# Left is temperature, right is speed in percentage (0-100)
 fan-curve:
   40: 50
   44: 70

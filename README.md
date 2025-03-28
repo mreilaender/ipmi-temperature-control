@@ -1,6 +1,8 @@
 # IPMI temperature control
 
-Sets fan speeds via remote IPMI according to a fan curve configured via a yaml file based on disk temperatures.
+Sets fan speeds via remote IPMI according to a fan curve configured via a yaml file based on disk temperatures. If any
+of the disks exceeds a temperature from the configuration file the fan speeds will be set accordingly for `FRNT_FAN2`
+and `FRNT_FAN3`. All other fans will be set to 100%.
 
 Currently only works for an ASRockRack E3C246D4U2-2T since the IPMI commands used are raw commands that presumably only 
 work for this board. Heavily inspired by [coledeck](https://github.com/coledeck/asrock-pwm-ipmi). Thanks for your help :)
