@@ -71,25 +71,25 @@ def main():
 
         logger.debug("Converting fan speed to hex: %s", fan_speed_hex_value)
         # noinspection PyListCreation
-        args = ["raw", "0x3a", "0x01"]
+        command_args = ["raw", "0x3a", "0x01"]
         # CPU_FAN1
-        args.append("0x64")
+        command_args.append("0x64")
         # ?
-        args.append("0x64")
+        command_args.append("0x64")
         # ?
-        args.append("0x64")
+        command_args.append("0x64")
         # REAR_FAN2
-        args.append("0x64")
+        command_args.append("0x64")
         # FRNT_FAN1
-        args.append("0x64")
+        command_args.append("0x64")
         # FRNT_FAN2
-        args.append(fan_speed_hex_value)
+        command_args.append(fan_speed_hex_value)
         # FRNT_FAN3
-        args.append(fan_speed_hex_value)
+        command_args.append(fan_speed_hex_value)
         # ?
-        args.append("0x64")
+        command_args.append("0x64")
 
-        ipmi.execute_set_fan_speed(args)
+        ipmi.execute_set_fan_speed(command_args)
 
         time.sleep(1)
 
