@@ -65,35 +65,33 @@ def main():
 
         logger.info("Setting fan speed to %s %s", target_fan_speed, "%")
 
-        time.sleep(5)
+        ipmi = IPMI(logger, args.host, args.username, args.password)
 
+        fan_speed_hex_value = str(hex(target_fan_speed))
 
+        logger.debug("Converting fan speed to hex: %s", fan_speed_hex_value)
+        # noinspection PyListCreation
+        args = ["raw", "0x3a", "0x01"]
+        # CPU_FAN1
+        args.append("0x64")
+        # ?
+        args.append("0x64")
+        # ?
+        args.append("0x64")
+        # REAR_FAN2
+        args.append("0x64")
+        # FRNT_FAN1
+        args.append("0x64")
+        # FRNT_FAN2
+        args.append(fan_speed_hex_value)
+        # FRNT_FAN3
+        args.append(fan_speed_hex_value)
+        # ?
+        args.append("0x64")
 
-    # ipmi = IPMI(logger, args.host, args.username, args.password)
-    #
-    # fan_speed_hex_value = str(hex(target_fan_speed))
-    #
-    # logger.debug("Converting fan speed to hex: %s", fan_speed_hex_value)
-    # # noinspection PyListCreation
-    # args = ["raw", "0x3a", "0x01"]
-    # # CPU_FAN1
-    # args.append("0x64")
-    # # ?
-    # args.append("0x64")
-    # # ?
-    # args.append("0x64")
-    # # REAR_FAN2
-    # args.append("0x64")
-    # # FRNT_FAN1
-    # args.append("0x64")
-    # # FRNT_FAN2
-    # args.append(fan_speed_hex_value)
-    # # FRNT_FAN3
-    # args.append(fan_speed_hex_value)
-    # # ?
-    # args.append("0x64")
-    #
-    # ipmi.execute_set_fan_speed(args)
+        ipmi.execute_set_fan_speed(args)
+
+        time.sleep(1)
 
 def is_thread_alive(thread: ThreadExecutor):
     return thread.is_alive()
