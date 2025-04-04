@@ -79,7 +79,7 @@ def main():
         # ?
         command_args.append("0x64")
         # REAR_FAN2
-        command_args.append("0x64")
+        command_args.append(fan_speed_hex_value)
         # FRNT_FAN1
         command_args.append("0x64")
         # FRNT_FAN2
