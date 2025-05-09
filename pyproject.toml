@@ -25,3 +25,11 @@ ipmi-temperature-control = "ipmi_temperature_control.entrypoint:main"
 where = ["src/python"]
 include = ["ipmi_temperature_control"]
 namespaces = false
+
+[pytest]
+testpaths = "src/test/python"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
